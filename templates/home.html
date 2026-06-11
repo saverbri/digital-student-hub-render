@@ -1,0 +1,423 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Главная • DSHub{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    {% if not user.is_authenticated %}
+    <!-- ========== ЛЕНДИНГ ДЛЯ НЕАВТОРИЗОВАННЫХ ========== -->
+    <!-- Hero -->
+    <div class="row justify-content-center mb-5">
+        <div class="col-lg-8 text-center">
+            <h1 class="display-4 fw-bold mb-3" style="color: var(--accent-cyan);">Digital Student Hub</h1>
+            <p class="lead text-secondary">Автоматизация обработки обращений студентов университета «Синергия»</p>
+            <p class="text-secondary">Быстро, удобно, прозрачно — все ваши заявки в одном месте.</p>
+            <div class="mt-4">
+                <a href="{% url 'login' %}" class="btn btn-primary me-3">Войти</a>
+                <a href="{% url 'register' %}" class="btn btn-outline-secondary">Регистрация</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Возможности (карточки) -->
+    <div class="row text-center mb-5">
+        <div class="col-12">
+            <h2 class="h3 mb-4">Возможности DSHub</h2>
+        </div>
+        <div class="col-md-3 col-sm-6 mb-4">
+            <div class="card h-100 border-0 text-center p-3">
+                <i class="fas fa-pen-alt fa-3x mb-3" style="color: var(--accent-cyan);"></i>
+                <h5>Подать обращение</h5>
+                <p class="text-secondary small">Справка, проблема, вопрос — заполните форму за минуту</p>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6 mb-4">
+            <div class="card h-100 border-0 text-center p-3">
+                <i class="fas fa-clock fa-3x mb-3" style="color: var(--warning);"></i>
+                <h5>Отслеживать статус</h5>
+                <p class="text-secondary small">В реальном времени следите за обработкой заявки</p>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6 mb-4">
+            <div class="card h-100 border-0 text-center p-3">
+                <i class="fas fa-comments fa-3x mb-3" style="color: var(--success);"></i>
+                <h5>Чат с поддержкой</h5>
+                <p class="text-secondary small">Общайтесь с сотрудником напрямую в каждом обращении</p>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6 mb-4">
+            <div class="card h-100 border-0 text-center p-3">
+                <i class="fas fa-bell fa-3x mb-3" style="color: var(--accent-cyan);"></i>
+                <h5>Уведомления</h5>
+                <p class="text-secondary small">Мгновенные оповещения об изменениях статуса и новых ответах</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Как это работает (3 шага) -->
+    <div class="row bg-dark bg-opacity-25 rounded-4 p-4 mb-5">
+        <div class="col-12 text-center mb-4">
+            <h2 class="h3">Как работает сервис</h2>
+        </div>
+        <div class="col-md-4 text-center">
+            <div class="display-1 fw-bold" style="color: var(--accent-cyan);">1</div>
+            <h5>Регистрация</h5>
+            <p class="text-secondary">Создайте аккаунт, используя свои студенческие данные</p>
+        </div>
+        <div class="col-md-4 text-center">
+            <div class="display-1 fw-bold" style="color: var(--accent-cyan);">2</div>
+            <h5>Создание обращения</h5>
+            <p class="text-secondary">Опишите проблему или запрос, приложите файлы (если нужно)</p>
+        </div>
+        <div class="col-md-4 text-center">
+            <div class="display-1 fw-bold" style="color: var(--accent-cyan);">3</div>
+            <h5>Получение ответа</h5>
+            <p class="text-secondary">Сотрудник обработает заявку, вы получите уведомление и сможете продолжить диалог в чате</p>
+        </div>
+    </div>
+
+    <!-- Преимущества (список + иконка) -->
+    <div class="row align-items-center mb-5">
+        <div class="col-md-6">
+            <h2 class="h3">Почему студенты выбирают DSHub?</h2>
+            <ul class="mt-3 list-unstyled">
+                <li class="mb-2"><i class="fas fa-check-circle me-2" style="color: var(--success);"></i> Экономия времени – не нужно ходить в деканат лично</li>
+                <li class="mb-2"><i class="fas fa-check-circle me-2" style="color: var(--success);"></i> Прозрачность – вы видите статус каждой заявки</li>
+                <li class="mb-2"><i class="fas fa-check-circle me-2" style="color: var(--success);"></i> Оперативность – средний ответ менее 2 часов</li>
+                <li class="mb-2"><i class="fas fa-check-circle me-2" style="color: var(--success);"></i> Удобство – мобильная версия и адаптивный дизайн</li>
+            </ul>
+        </div>
+        <div class="col-md-6 text-center">
+            <i class="fas fa-chart-line fa-5x" style="color: var(--accent-cyan); opacity: 0.8;"></i>
+        </div>
+    </div>
+
+    <!-- Призыв к действию -->
+    <div class="row justify-content-center">
+        <div class="col-lg-6 text-center">
+            <div class="card border-0 bg-accent-subtle p-4">
+                <h3 class="fw-semibold">Готовы упростить свою студенческую жизнь?</h3>
+                <div class="mt-3">
+                    <a href="{% url 'register' %}" class="btn btn-primary btn-lg">Зарегистрироваться</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% else %}
+    <!-- ========== ДЛЯ АВТОРИЗОВАННЫХ ПОЛЬЗОВАТЕЛЕЙ ========== -->
+    <!-- Приветствие -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-0 bg-transparent">
+                <div class="card-body p-0">
+                    <h2 class="fw-bold" style="color: var(--text-primary);">
+                        Привет, {{ user.first_name|default:user.username }}! 👋
+                    </h2>
+                    <p class="text-secondary fs-5">
+                        {% if user.role == 'student' %}
+                            {% with in_progress=processing_requests %}
+                                {% if in_progress > 0 %}
+                                    У вас {{ in_progress }} обращение{% if in_progress > 1 %}я{% endif %} в работе. Обычно ответ приходит в течение 2 часов.
+                                {% else %}
+                                    У вас нет активных обращений. Хотите создать новое?
+                                {% endif %}
+                            {% endwith %}
+                        {% elif user.role == 'staff' %}
+                            Новых заявок сегодня: {{ new_requests_today|default:0 }}. Не забудьте обработать.
+                        {% elif user.role == 'manager' or user.role == 'admin' %}
+                            Добро пожаловать в панель управления. Общая статистика ниже.
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Быстрые действия -->
+    <div class="row g-4 mb-5">
+        {% if user.role == 'student' %}
+            <div class="col-md-4">
+                <div class="card h-100 text-center border-0 hover-lift">
+                    <div class="card-body p-4">
+                        <i class="fas fa-pen-alt fa-3x mb-3" style="color: var(--accent-cyan);"></i>
+                        <h5 class="fw-semibold">Подать обращение</h5>
+                        <p class="text-secondary small">Справка, проблема, вопрос</p>
+                        <a href="{% url 'student_dashboard' %}" class="btn btn-obisidian mt-2">Создать</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 text-center border-0 hover-lift">
+                    <div class="card-body p-4">
+                        <i class="fas fa-clock fa-3x mb-3" style="color: var(--warning);"></i>
+                        <h5 class="fw-semibold">Мои обращения</h5>
+                        <p class="text-secondary small">Статус и история</p>
+                        <a href="{% url 'student_dashboard' %}#requests-list" class="btn btn-outline-secondary mt-2">Смотреть</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 text-center border-0 hover-lift">
+                    <div class="card-body p-4">
+                        <i class="fas fa-comments fa-3x mb-3" style="color: var(--success);"></i>
+                        <h5 class="fw-semibold">Чат с поддержкой</h5>
+                        <p class="text-secondary small">Последние диалоги</p>
+                        <a href="{% url 'student_dashboard' %}" class="btn btn-outline-secondary mt-2">Перейти</a>
+                    </div>
+                </div>
+            </div>
+        {% elif user.role == 'staff' %}
+            <div class="col-md-4">
+                <div class="card h-100 text-center border-0 hover-lift">
+                    <div class="card-body p-4">
+                        <i class="fas fa-inbox fa-3x mb-3" style="color: var(--accent-cyan);"></i>
+                        <h5 class="fw-semibold">Новые заявки</h5>
+                        <p class="text-secondary small">Требуют обработки</p>
+                        <a href="{% url 'staff_requests' %}?status=new" class="btn btn-obisidian mt-2">Перейти</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 text-center border-0 hover-lift">
+                    <div class="card-body p-4">
+                        <i class="fas fa-tasks fa-3x mb-3" style="color: var(--warning);"></i>
+                        <h5 class="fw-semibold">В работе</h5>
+                        <p class="text-secondary small">Продолжить обработку</p>
+                        <a href="{% url 'staff_requests' %}?status=processing" class="btn btn-outline-secondary mt-2">Смотреть</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 text-center border-0 hover-lift">
+                    <div class="card-body p-4">
+                        <i class="fas fa-chart-simple fa-3x mb-3" style="color: var(--success);"></i>
+                        <h5 class="fw-semibold">Отчёты</h5>
+                        <p class="text-secondary small">Статистика и экспорт</p>
+                        <a href="{% url 'reports' %}" class="btn btn-outline-secondary mt-2">Сформировать</a>
+                    </div>
+                </div>
+            </div>
+        {% elif user.role == 'manager' or user.role == 'admin' %}
+            <div class="col-md-4">
+                <div class="card h-100 text-center border-0 hover-lift">
+                    <div class="card-body p-4">
+                        <i class="fas fa-chart-line fa-3x mb-3" style="color: var(--accent-cyan);"></i>
+                        <h5 class="fw-semibold">Дашборд</h5>
+                        <p class="text-secondary small">Графики и KPI</p>
+                        <a href="{% url 'manager_dashboard' %}" class="btn btn-obisidian mt-2">Открыть</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 text-center border-0 hover-lift">
+                    <div class="card-body p-4">
+                        <i class="fas fa-history fa-3x mb-3" style="color: var(--warning);"></i>
+                        <h5 class="fw-semibold">Журнал аудита</h5>
+                        <p class="text-secondary small">Действия пользователей</p>
+                        <a href="{% url 'core:audit_log_list' %}" class="btn btn-outline-secondary mt-2">Просмотр</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 text-center border-0 hover-lift">
+                    <div class="card-body p-4">
+                        <i class="fas fa-users fa-3x mb-3" style="color: var(--success);"></i>
+                        <h5 class="fw-semibold">Управление</h5>
+                        <p class="text-secondary small">Пользователи и настройки</p>
+                        <a href="{% url 'admin:index' %}" class="btn btn-outline-secondary mt-2">Админка</a>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Виджет уведомлений + статистика -->
+    <div class="row g-4 mb-5">
+        <div class="col-md-5">
+            <div class="card h-100 border-0">
+                <div class="card-header bg-transparent border-0 fw-semibold">
+                    <i class="fas fa-bell me-2"></i> Последние уведомления
+                </div>
+                <div class="card-body pt-0">
+                    {% if unread_notifications %}
+                        <ul class="list-group list-group-flush">
+                            {% for notif in unread_notifications|slice:":3" %}
+                                <li class="list-group-item bg-transparent px-0">
+                                    <div class="d-flex justify-content-between">
+                                        <span>{{ notif.message|truncatechars:60 }}</span>
+                                        <small class="text-secondary">{{ notif.created_at|timesince }} назад</small>
+                                    </div>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                        <div class="mt-3 text-end">
+                            <a href="{% url 'notification_list' %}" class="btn btn-sm btn-obisidian">Все уведомления →</a>
+                        </div>
+                    {% else %}
+                        <p class="text-secondary py-3">Нет новых уведомлений</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="col-md-7">
+            <div class="row g-3">
+                <div class="col-6 col-md-3">
+                    <div class="card text-center border-0 h-100">
+                        <div class="card-body py-3">
+                            <i class="fas fa-file-alt fa-2x mb-2" style="color: var(--accent-cyan);"></i>
+                            <h6 class="text-secondary">Всего</h6>
+                            <p class="h3 mb-0">{{ total_requests }}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="card text-center border-0 h-100">
+                        <div class="card-body py-3">
+                            <i class="fas fa-spinner fa-2x mb-2" style="color: var(--warning);"></i>
+                            <h6 class="text-secondary">В работе</h6>
+                            <p class="h3 mb-0">{{ processing_requests }}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="card text-center border-0 h-100">
+                        <div class="card-body py-3">
+                            <i class="fas fa-check-circle fa-2x mb-2" style="color: var(--success);"></i>
+                            <h6 class="text-secondary">Завершено</h6>
+                            <p class="h3 mb-0">{{ completed_requests }}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="card text-center border-0 h-100">
+                        <div class="card-body py-3">
+                            <i class="fas fa-users fa-2x mb-2" style="color: var(--accent-cyan);"></i>
+                            <h6 class="text-secondary">Студентов</h6>
+                            <p class="h3 mb-0">{{ students_count }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Таблица последних обращений -->
+    <div class="card mb-5 border-0">
+        <div class="card-header bg-transparent d-flex justify-content-between align-items-center">
+            <span><i class="fas fa-clock me-2"></i> Последние обращения</span>
+            <a href="{% if user.role == 'student' %}{% url 'student_dashboard' %}{% else %}{% url 'staff_requests' %}{% endif %}" class="btn btn-sm btn-outline-secondary">Все →</a>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead>
+                        <tr><th>ID</th><th>Студент</th><th>Тип</th><th>Статус</th><th>Дата</th><th></th></tr>
+                    </thead>
+                    <tbody>
+                        {% for req in recent_requests %}
+                        <tr>
+                            <td>#{{ req.id }}</td>
+                            <td>{{ req.student.get_full_name|default:req.student.username }}</td>
+                            <td>{{ req.get_request_type_display }}</td>
+                            <td><span class="badge-status 
+                                {% if req.status == 'new' %}badge-new
+                                {% elif req.status == 'processing' %}badge-processing
+                                {% elif req.status == 'completed' %}badge-completed
+                                {% else %}badge-rejected{% endif %}">
+                                {{ req.get_status_display }}</span></td>
+                            <td>{{ req.created_at|date:"d.m.Y" }}</td>
+                            <td><a href="{% url 'chat_detail' req.id %}" class="btn btn-sm btn-outline-secondary"><i class="fas fa-comment"></i> Чат</a></td>
+                        </tr>
+                        {% empty %}
+                        <tr><td colspan="6" class="text-center text-secondary py-4">Нет обращений</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Полезно знать -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card border-0">
+                <div class="card-body p-4">
+                    <h5 class="fw-semibold mb-3"><i class="fas fa-lightbulb me-2" style="color: var(--accent-cyan);"></i>Полезно знать</h5>
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <a href="#" class="text-decoration-none">
+                                <i class="fas fa-question-circle me-2"></i> Как подать обращение?
+                            </a>
+                        </div>
+                        <div class="col-md-4">
+                            <a href="#" class="text-decoration-none">
+                                <i class="fas fa-clock me-2"></i> Среднее время ответа
+                            </a>
+                        </div>
+                        <div class="col-md-4">
+                            <a href="#" class="text-decoration-none">
+                                <i class="fas fa-headset me-2"></i> Контакты поддержки
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<style>
+    .hover-lift {
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .hover-lift:hover {
+        transform: translateY(-4px);
+        box-shadow: var(--shadow-md);
+    }
+    .btn-obisidian {
+        background: transparent;
+        border: 1px solid var(--accent-cyan);
+        color: var(--accent-cyan);
+        border-radius: 40px;
+        padding: 0.4rem 1.2rem;
+        font-weight: 500;
+        transition: var(--transition);
+    }
+    .btn-obisidian:hover {
+        background: var(--accent-cyan);
+        color: #0A0A0A;
+        box-shadow: 0 0 8px var(--accent-cyan-glow);
+    }
+    .bg-accent-subtle {
+        background: rgba(34, 211, 238, 0.1);
+    }
+    .btn-primary {
+        background: transparent;
+        border: 1px solid var(--accent-cyan);
+        color: var(--accent-cyan);
+        border-radius: 40px;
+        padding: 8px 20px;
+        font-weight: 500;
+        transition: var(--transition);
+    }
+    .btn-primary:hover {
+        background: var(--accent-cyan);
+        color: #0A0A0A;
+        box-shadow: 0 0 12px var(--accent-cyan-glow);
+        transform: translateY(-1px);
+    }
+    .btn-outline-secondary {
+        border-color: var(--border-subtle);
+        color: var(--text-secondary);
+        border-radius: 40px;
+    }
+    .btn-outline-secondary:hover {
+        border-color: var(--accent-cyan);
+        color: var(--accent-cyan);
+        background: rgba(34,211,238,0.05);
+    }
+</style>
+{% endblock %}

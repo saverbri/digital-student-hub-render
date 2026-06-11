@@ -1,0 +1,102 @@
+{% extends 'base.html' %}
+{% block title %}Дашборд руководителя{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">Аналитика обращений</h1>
+<div class="row">
+    <div class="col-md-6 mb-4">
+        <div class="card">
+            <div class="card-header">Статусы обращений</div>
+            <div class="card-body">
+                <canvas id="statusChart" width="400" height="300"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 mb-4">
+        <div class="card">
+            <div class="card-header">Типы обращений</div>
+            <div class="card-body">
+                <canvas id="typeChart" width="400" height="300"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-12 mb-4">
+        <div class="card">
+            <div class="card-header">Динамика обращений (последние 7 дней)</div>
+            <div class="card-body">
+                <canvas id="trendChart" width="800" height="300"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{{ status_stats|json_script:"status-data" }}
+{{ type_stats|json_script:"type-data" }}
+{{ date_labels|json_script:"date-labels" }}
+{{ date_counts|json_script:"date-counts" }}
+<script>
+    // Загружаем данные из скрытых JSON-элементов
+    const statusData = JSON.parse(document.getElementById('status-data').textContent);
+    const typeData = JSON.parse(document.getElementById('type-data').textContent);
+    const dateLabels = JSON.parse(document.getElementById('date-labels').textContent);
+    const dateCounts = JSON.parse(document.getElementById('date-counts').textContent);
+
+    // График статусов (круговая)
+    const statusCtx = document.getElementById('statusChart').getContext('2d');
+    new Chart(statusCtx, {
+        type: 'pie',
+        data: {
+            labels: statusData.map(item => {
+                switch(item.status) {
+                    case 'new': return 'Новое';
+                    case 'processing': return 'В обработке';
+                    case 'completed': return 'Завершено';
+                    default: return 'Отклонено';
+                }
+            }),
+            datasets: [{
+                data: statusData.map(item => item.count),
+                backgroundColor: ['#6c757d', '#ffc107', '#198754', '#dc3545']
+            }]
+        }
+    });
+
+    // График типов (столбчатая)
+    const typeCtx = document.getElementById('typeChart').getContext('2d');
+    new Chart(typeCtx, {
+        type: 'bar',
+        data: {
+            labels: typeData.map(item => {
+                switch(item.request_type) {
+                    case 'certificate': return 'Справка об обучении';
+                    case 'transcript': return 'Академическая справка';
+                    default: return 'Другое';
+                }
+            }),
+            datasets: [{
+                label: 'Количество',
+                data: typeData.map(item => item.count),
+                backgroundColor: '#0d6efd'
+            }]
+        }
+    });
+
+    // Линейный график динамики
+    const trendCtx = document.getElementById('trendChart').getContext('2d');
+    new Chart(trendCtx, {
+        type: 'line',
+        data: {
+            labels: dateLabels,
+            datasets: [{
+                label: 'Обращений',
+                data: dateCounts,
+                borderColor: '#198754',
+                tension: 0.1
+            }]
+        }
+    });
+</script>
+{% endblock %}

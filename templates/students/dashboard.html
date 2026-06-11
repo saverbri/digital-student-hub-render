@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% block title %}Мой кабинет{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-4">
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">Новое обращение</h5>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <button type="submit" class="btn btn-primary w-100">Отправить</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">Мои обращения</h5>
+            </div>
+            <div class="card-body">
+                {% if requests %}
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Тип</th>
+                                    <th>Статус</th>
+                                    <th>Дата</th>
+                                    <th>Документ</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for req in requests %}
+                                <tr>
+                                    <td>{{ req.get_request_type_display }}</td>
+                                    <td>
+                                        <span class="badge-status 
+                                            {% if req.status == 'new' %}badge-new
+                                            {% elif req.status == 'processing' %}badge-processing
+                                            {% elif req.status == 'completed' %}badge-completed
+                                            {% else %}badge-rejected{% endif %}">
+                                            {{ req.get_status_display }}
+                                        </span>
+                                    </td>
+                                    <td>{{ req.created_at|date:"d.m.Y H:i" }}</td>
+                                    <td>
+                                        {% if req.document %}
+                                            <a href="{{ req.document.file.url }}" class="btn btn-sm btn-outline-primary" target="_blank">Скачать</a>
+                                        {% else %}
+                                            —
+                                        {% endif %}
+                                    </td>
+                                    <td>
+    <a href="{% url 'chat_detail' req.id %}" class="btn btn-sm btn-outline-info">Чат</a>
+</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <p class="text-muted">У вас пока нет обращений.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

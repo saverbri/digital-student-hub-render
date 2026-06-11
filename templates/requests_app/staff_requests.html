@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% block title %}Обработка обращений{% endblock %}
+
+{% block content %}
+<h2>Все обращения студентов</h2>
+<div class="table-responsive">
+    <table class="table table-bordered table-hover">
+        <thead class="table-dark">
+            <tr>
+                <th>ID</th>
+                <th>Студент</th>
+                <th>Тип</th>
+                <th>Описание</th>
+                <th>Статус</th>
+                <th>Дата</th>
+                <th>Действия</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for req in requests_list %}
+            <tr>
+                <td>{{ req.id }}</td>
+                <td>{{ req.student.get_full_name|default:req.student.username }}</td>
+                <td>{{ req.get_request_type_display }}</td>
+                <td>{{ req.description|truncatewords:10 }}</td>
+                <td>
+                    <span class="badge-status 
+                        {% if req.status == 'new' %}badge-new
+                        {% elif req.status == 'processing' %}badge-processing
+                        {% elif req.status == 'completed' %}badge-completed
+                        {% else %}badge-rejected{% endif %}">
+                        {{ req.get_status_display }}
+                    </span>
+                </td>
+                <td>{{ req.created_at|date:"d.m.Y H:i" }}</td>
+                <td>
+                    <form method="post" action="{% url 'change_request_status' req.id %}" style="display: inline-block; margin-right: 5px;">
+                        {% csrf_token %}
+                        <select name="status" class="form-select form-select-sm d-inline w-auto" style="width: auto;">
+                            <option value="new" {% if req.status == 'new' %}selected{% endif %}>Новое</option>
+                            <option value="processing" {% if req.status == 'processing' %}selected{% endif %}>В обработке</option>
+                            <option value="completed" {% if req.status == 'completed' %}selected{% endif %}>Завершено</option>
+                            <option value="rejected" {% if req.status == 'rejected' %}selected{% endif %}>Отклонено</option>
+                        </select>
+                        <button type="submit" class="btn btn-sm btn-primary">Изменить</button>
+                    </form>
+                    <a href="{% url 'chat_detail' req.id %}" class="btn btn-sm btn-outline-info">Чат</a>
+                    {% if req.status == 'completed' and not req.document %}
+                        <a href="{% url 'generate_document' req.id %}" class="btn btn-sm btn-success">Сформировать документ</a>
+                    {% endif %}
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="7" class="text-center">Нет обращений</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

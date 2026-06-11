@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="ru" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="csrf-token" content="{{ csrf_token }}">
+    <title>{% block title %}DSHub • Digital Student Hub{% endblock %}</title>
+
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Google Fonts: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+    <!-- Font Awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg-deep: #0A0A0A;
+            --surface-dark: #121212;
+            --border-subtle: #1F2937;
+            --accent-cyan: #22D3EE;
+            --accent-cyan-glow: rgba(34, 211, 238, 0.4);
+            --text-primary: #E2E8F0;
+            --text-secondary: #94A3B8;
+            --success: #10B981;
+            --warning: #F59E0B;
+            --danger: #EF4444;
+            --radius-md: 14px;
+            --radius-lg: 18px;
+            --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.3);
+            --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.4);
+            --shadow-glow: 0 0 8px var(--accent-cyan-glow);
+            --transition: all 0.2s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+        }
+
+        [data-bs-theme="light"] {
+            --bg-deep: #F8FAFC;
+            --surface-dark: #FFFFFF;
+            --border-subtle: #E2E8F0;
+            --text-primary: #1E293B;
+            --text-secondary: #475569;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--bg-deep);
+            color: var(--text-primary);
+            padding-top: 70px;
+            position: relative;
+            transition: background 0.3s, color 0.2s;
+        }
+
+        [data-bs-theme="dark"] body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .navbar {
+            background: var(--surface-dark);
+            border-bottom: 1px solid var(--border-subtle);
+            backdrop-filter: blur(8px);
+            padding: 0.7rem 1rem;
+            box-shadow: var(--shadow-sm);
+        }
+        .navbar-brand {
+            font-weight: 600;
+            font-size: 1.5rem;
+            letter-spacing: -0.3px;
+            color: var(--text-primary) !important;
+        }
+        .navbar-brand i {
+            color: var(--accent-cyan);
+            margin-right: 8px;
+        }
+        .navbar .btn-link,
+        .navbar .dropdown-toggle {
+            color: var(--text-primary) !important;
+            transition: var(--transition);
+        }
+        .navbar .btn-link:hover,
+        .navbar .dropdown-toggle:hover {
+            color: var(--accent-cyan) !important;
+            text-shadow: 0 0 6px var(--accent-cyan-glow);
+        }
+
+        .sidebar {
+            position: fixed;
+            top: 70px;
+            bottom: 0;
+            left: 0;
+            width: 280px;
+            background: var(--surface-dark);
+            border-right: 1px solid var(--border-subtle);
+            transition: transform 0.3s ease;
+            z-index: 100;
+            overflow-y: auto;
+        }
+        .sidebar .nav-link {
+            font-weight: 500;
+            padding: 0.75rem 1.2rem;
+            margin: 0.3rem 0.8rem;
+            border-radius: var(--radius-md);
+            color: var(--text-secondary);
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+        }
+        .sidebar .nav-link i {
+            width: 28px;
+            margin-right: 12px;
+            font-size: 1.1rem;
+            text-align: center;
+        }
+        .sidebar .nav-link:hover {
+            background: rgba(34, 211, 238, 0.1);
+            color: var(--accent-cyan);
+            transform: translateX(4px);
+        }
+        .sidebar .nav-link.active {
+            background: rgba(34, 211, 238, 0.15);
+            color: var(--accent-cyan);
+            border-left: 2px solid var(--accent-cyan);
+        }
+
+        main {
+            margin-left: 280px;
+            padding: 24px 32px;
+            animation: fadeInUp 0.4s ease-out;
+        }
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(15px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .card {
+            background: var(--surface-dark);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            transition: var(--transition);
+            box-shadow: var(--shadow-sm);
+        }
+        .card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-md);
+            border-color: rgba(34, 211, 238, 0.3);
+        }
+        .card-header {
+            background: transparent;
+            border-bottom: 1px solid var(--border-subtle);
+            font-weight: 600;
+            padding: 1rem 1.25rem;
+            color: var(--text-primary);
+        }
+
+        .btn-primary {
+            background: transparent;
+            border: 1px solid var(--accent-cyan);
+            color: var(--accent-cyan);
+            border-radius: 40px;
+            padding: 8px 20px;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+        .btn-primary:hover {
+            background: var(--accent-cyan);
+            color: #0A0A0A;
+            box-shadow: 0 0 12px var(--accent-cyan-glow);
+            transform: translateY(-1px);
+        }
+        .btn-outline-secondary {
+            border-color: var(--border-subtle);
+            color: var(--text-secondary);
+            border-radius: 40px;
+        }
+        .btn-outline-secondary:hover {
+            border-color: var(--accent-cyan);
+            color: var(--accent-cyan);
+            background: rgba(34,211,238,0.05);
+        }
+
+        .badge-status {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 30px;
+            font-weight: 500;
+            font-size: 0.7rem;
+            text-align: center;
+        }
+        .badge-new { background: rgba(100, 116, 139, 0.2); color: #94A3B8; border: 1px solid #475569; }
+        .badge-processing { background: rgba(245, 158, 11, 0.15); color: #F59E0B; border: 1px solid #F59E0B; }
+        .badge-completed { background: rgba(16, 185, 129, 0.15); color: #10B981; border: 1px solid #10B981; }
+        .badge-rejected { background: rgba(239, 68, 68, 0.15); color: #EF4444; border: 1px solid #EF4444; }
+
+        .table {
+            color: var(--text-secondary);
+            border-color: var(--border-subtle);
+        }
+        .table thead th {
+            background: rgba(34, 211, 238, 0.05);
+            border-bottom: 1px solid var(--border-subtle);
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        .table tbody tr:hover {
+            background: rgba(34, 211, 238, 0.03);
+        }
+
+        .form-control, .form-select {
+            background: var(--surface-dark);
+            border: 1px solid var(--border-subtle);
+            color: var(--text-primary);
+            border-radius: var(--radius-md);
+            padding: 0.6rem 1rem;
+        }
+        .form-control:focus, .form-select:focus {
+            border-color: var(--accent-cyan);
+            box-shadow: 0 0 0 3px rgba(34, 211, 238, 0.2);
+            background: var(--surface-dark);
+            color: var(--text-primary);
+        }
+        label {
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .message-bubble {
+            max-width: 70%;
+            padding: 10px 16px;
+            border-radius: 20px;
+            margin-bottom: 12px;
+        }
+        .message-sent {
+            background: var(--accent-cyan);
+            color: #0A0A0A;
+            margin-left: auto;
+            border-bottom-right-radius: 4px;
+        }
+        .message-received {
+            background: var(--surface-dark);
+            border: 1px solid var(--border-subtle);
+            color: var(--text-primary);
+            margin-right: auto;
+            border-bottom-left-radius: 4px;
+        }
+
+        .mobile-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 99;
+            backdrop-filter: blur(2px);
+        }
+        .mobile-overlay.active {
+            display: block;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                z-index: 101;
+            }
+            .sidebar.show {
+                transform: translateX(0);
+            }
+            main {
+                margin-left: 0;
+                padding: 16px;
+            }
+            .navbar .btn-link.me-2 {
+                display: block;
+            }
+        }
+
+        @media (min-width: 769px) {
+            .navbar .btn-link.me-2 {
+                display: none;
+            }
+            .mobile-overlay {
+                display: none !important;
+            }
+        }
+
+        ::-webkit-scrollbar {
+            width: 5px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--surface-dark);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--border-subtle);
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-cyan);
+        }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+<body data-color-scheme="{{ user.settings.color_scheme|default:'cyan' }}">
+    <div class="mobile-overlay" id="mobileOverlay"></div>
+
+    <nav class="navbar navbar-expand-lg fixed-top">
+        <div class="container-fluid">
+            <button class="btn btn-link me-2 d-md-none" type="button" id="sidebarToggle" style="color: var(--text-primary);">
+                <i class="fas fa-bars fa-lg"></i>
+            </button>
+            <a class="navbar-brand" href="{% url 'home' %}">
+                <i class="fas fa-graduation-cap"></i> DSHub
+            </a>
+            <div class="ms-auto d-flex align-items-center">
+                <button class="theme-toggle btn btn-link me-3" id="themeToggle" style="font-size:1.2rem;">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <div class="dropdown me-3">
+                    <a class="dropdown-toggle text-decoration-none" href="#" role="button" data-bs-toggle="dropdown">
+                        <i class="fas fa-bell fa-lg"></i>
+                        {% if unread_notifications.count > 0 %}
+                            <span class="badge bg-danger ms-1">{{ unread_notifications.count }}</span>
+                        {% endif %}
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end shadow border-0" style="border-radius: 16px; background: var(--surface-dark); border: 1px solid var(--border-subtle);">
+                        {% for notif in unread_notifications|slice:":5" %}
+                            <li><a class="dropdown-item py-2" href="{{ notif.link|default:'#' }}">{{ notif.message }}<br><small class="text-muted">{{ notif.created_at|timesince }} назад</small></a></li>
+                        {% empty %}
+                            <li><span class="dropdown-item text-muted">Нет уведомлений</span></li>
+                        {% endfor %}
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item text-center" href="{% url 'notification_list' %}">Все уведомления →</a></li>
+                    </ul>
+                </div>
+                <div class="dropdown">
+                    <a class="dropdown-toggle text-decoration-none" href="#" role="button" data-bs-toggle="dropdown">
+                        <i class="fas fa-user-circle fa-lg"></i> {{ user.get_full_name|default:user.username }}
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end shadow border-0" style="border-radius: 16px; background: var(--surface-dark); border: 1px solid var(--border-subtle);">
+                        <li><a class="dropdown-item" href="{% url 'core:user_settings' %}"><i class="fas fa-cog me-2"></i>Настройки</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><form method="post" action="{% url 'logout' %}">{% csrf_token %}<button type="submit" class="dropdown-item"><i class="fas fa-sign-out-alt me-2"></i>Выйти</button></form></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="sidebar" id="sidebar">
+        <div class="position-sticky pt-3">
+            <ul class="nav flex-column">
+                {% if user.is_authenticated %}
+                    {% if user.role == 'student' %}
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.resolver_match.url_name == 'student_dashboard' %}active{% endif %}" href="{% url 'student_dashboard' %}">
+                                <i class="fas fa-tachometer-alt"></i> Личный кабинет
+                            </a>
+                        </li>
+                    {% endif %}
+                    {% if user.role == 'staff' or user.role == 'manager' or user.role == 'admin' or user.is_superuser %}
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.resolver_match.url_name == 'staff_requests' %}active{% endif %}" href="{% url 'staff_requests' %}">
+                                <i class="fas fa-clipboard-list"></i> Обработка заявок
+                            </a>
+                        </li>
+                    {% endif %}
+                    {% if user.role == 'manager' or user.role == 'admin' or user.is_superuser %}
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.resolver_match.url_name == 'manager_dashboard' %}active{% endif %}" href="{% url 'manager_dashboard' %}">
+                                <i class="fas fa-chart-line"></i> Дашборд
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.resolver_match.url_name == 'audit_log_list' %}active{% endif %}" href="{% url 'core:audit_log_list' %}">
+                                <i class="fas fa-history"></i> Журнал аудита
+                            </a>
+                        </li>
+
+                        {% if user.role == 'manager' or user.role == 'admin' or user.is_superuser %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'faq:manage' %}">
+                                <i class="fas fa-edit"></i> Управление FAQ
+                            </a>
+                        </li>
+                        {% endif %}
+
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'reports' %}">
+                                <i class="fas fa-chart-bar"></i> Отчёты
+                            </a>
+                        </li>
+                    {% endif %}
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'notification_list' %}active{% endif %}" href="{% url 'notification_list' %}">
+                            <i class="fas fa-bell"></i> Уведомления
+                            {% if unread_notifications.count > 0 %}
+                                <span class="badge bg-danger ms-2">{{ unread_notifications.count }}</span>
+                            {% endif %}
+                        </a>
+                    </li>
+                        <!-- Для всех авторизованных -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'faq:list' %}">
+                            <i class="fas fa-book-open"></i> База знаний
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'user_settings' %}active{% endif %}" href="{% url 'core:user_settings' %}">
+                            <i class="fas fa-cog"></i> Настройки
+                        </a>
+                    </li>
+                {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'login' %}">
+                            <i class="fas fa-sign-in-alt"></i> Вход
+                        </a>
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+
+    <main>
+        <div class="container-fluid px-md-4">
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show shadow-sm border-0 rounded-4" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+            {% block content %}{% endblock %}
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Мобильное меню
+        const sidebar = document.getElementById('sidebar');
+        const toggleBtn = document.getElementById('sidebarToggle');
+        const overlay = document.getElementById('mobileOverlay');
+        
+        function closeSidebar() {
+            if (sidebar && window.innerWidth <= 768) {
+                sidebar.classList.remove('show');
+                if (overlay) overlay.classList.remove('active');
+            }
+        }
+        function openSidebar() {
+            if (sidebar && window.innerWidth <= 768) {
+                sidebar.classList.add('show');
+                if (overlay) overlay.classList.add('active');
+            }
+        }
+        if (toggleBtn) {
+            toggleBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                if (sidebar.classList.contains('show')) closeSidebar();
+                else openSidebar();
+            });
+        }
+        if (overlay) overlay.addEventListener('click', closeSidebar);
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && sidebar && sidebar.classList.contains('show')) closeSidebar();
+        });
+        if (sidebar) {
+            sidebar.querySelectorAll('a').forEach(link => {
+                link.addEventListener('click', () => { if (window.innerWidth <= 768) closeSidebar(); });
+            });
+        }
+        window.addEventListener('resize', () => {
+            if (window.innerWidth > 768) {
+                if (sidebar) sidebar.classList.remove('show');
+                if (overlay) overlay.classList.remove('active');
+            }
+        });
+        
+        // Тема (светлая/тёмная)
+        const themeToggle = document.getElementById('themeToggle');
+        const html = document.documentElement;
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme) {
+            html.setAttribute('data-bs-theme', savedTheme);
+            updateIcon(savedTheme);
+        } else {
+            html.setAttribute('data-bs-theme', 'dark');
+            updateIcon('dark');
+        }
+        function updateIcon(theme) {
+            const icon = themeToggle.querySelector('i');
+            if (theme === 'dark') {
+                icon.classList.remove('fa-sun');
+                icon.classList.add('fa-moon');
+            } else {
+                icon.classList.remove('fa-moon');
+                icon.classList.add('fa-sun');
+            }
+        }
+        themeToggle.addEventListener('click', () => {
+            const current = html.getAttribute('data-bs-theme');
+            const next = current === 'dark' ? 'light' : 'dark';
+            html.setAttribute('data-bs-theme', next);
+            localStorage.setItem('theme', next);
+            updateIcon(next);
+        });
+        
+        // Цветовая схема (акцент) с приоритетом localStorage и мгновенной сменой
+        function setAccentColorGlobal(scheme) {
+            let color;
+            switch(scheme) {
+                case 'blue': color = '#3B82F6'; break;
+                case 'green': color = '#10B981'; break;
+                case 'purple': color = '#8B5CF6'; break;
+                default: color = '#22D3EE';
+            }
+            document.documentElement.style.setProperty('--accent-cyan', color);
+            const r = parseInt(color.slice(1,3), 16);
+            const g = parseInt(color.slice(3,5), 16);
+            const b = parseInt(color.slice(5,7), 16);
+            document.documentElement.style.setProperty('--accent-cyan-glow', `rgba(${r}, ${g}, ${b}, 0.4)`);
+        }
+
+        let colorScheme = localStorage.getItem('color_scheme');
+        if (!colorScheme) {
+            colorScheme = document.body.dataset.colorScheme || 'cyan';
+            localStorage.setItem('color_scheme', colorScheme);
+        }
+        setAccentColorGlobal(colorScheme);
+    </script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

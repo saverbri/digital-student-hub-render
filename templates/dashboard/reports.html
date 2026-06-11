@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% block title %}Отчёты{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">📊 Отчёты и аналитика</h1>
+<div class="row">
+    <div class="col-md-6 mb-4">
+        <div class="card h-100">
+            <div class="card-header">Экспорт данных</div>
+            <div class="card-body">
+                <p>Скачать полный список обращений в формате Excel или PDF.</p>
+                <a href="?export_excel=1" class="btn btn-success me-2"><i class="fas fa-file-excel"></i> Excel (XLSX)</a>
+                <a href="?export_pdf=1" class="btn btn-danger"><i class="fas fa-file-pdf"></i> PDF</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 mb-4">
+        <div class="card h-100">
+            <div class="card-header">Ключевые показатели</div>
+            <div class="card-body">
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        Всего обращений
+                        <span class="badge bg-primary rounded-pill">{{ total_requests }}</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        Всего студентов
+                        <span class="badge bg-primary rounded-pill">{{ students_count }}</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-6 mb-4">
+        <div class="card">
+            <div class="card-header">По статусам</div>
+            <div class="card-body">
+                <ul>
+                    {% for stat in status_stats %}
+                        <li>{{ stat.get_status_display }}: {{ stat.count }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 mb-4">
+        <div class="card">
+            <div class="card-header">По типам</div>
+            <div class="card-body">
+                <ul>
+                    {% for typ in type_stats %}
+                        <li>{{ typ.get_request_type_display }}: {{ typ.count }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
